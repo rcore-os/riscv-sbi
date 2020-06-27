@@ -1,4 +1,4 @@
-//! SBI Base Functionality (Extension 0x10)
+//! SBI Base Functionality, Extension ID 0x10
 //!
 //! The base of the SBI is designed to be as small as possible.
 //! As such, it only contains functionality for probing which SBI extensions

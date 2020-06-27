@@ -1,4 +1,4 @@
-//! Legacy SBI Extension (v0.1)
+//! Legacy SBI Extension, Extension IDs 0x00 through 0x0F
 //!
 //! Ref: https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc#legacy-sbi-extension-extension-ids-0x00-through-0x0f
 
