@@ -2,9 +2,9 @@
 //!
 //! Ref: https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
 //!
-//! 
+//!
 //! # Features
-//! 
+//!
 //! This crate provides access to standard SBI functions, both base and legacy ones.
 
 #![no_std]
