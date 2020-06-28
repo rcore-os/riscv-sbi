@@ -82,7 +82,7 @@ const EXTENSION_TIME: usize = 0x54494D45;
 /// Timer Extension, Extension ID: 0x54494D45 (TIME)
 ///
 /// Caller should validate if this extension exists using [`probe_extension`].
-/// 
+///
 /// [`probe_extension`]: ../base/fn.probe_extension.html
 pub mod time {
     use super::*;
@@ -106,17 +106,23 @@ pub mod time {
             0,
         );
         #[cfg(target_pointer_width = "64")]
-        sbi_call(EXTENSION_TIME, FUNCTION_SET_TIMER, stime_value as usize, 0, 0);
-    }    
+        sbi_call(
+            EXTENSION_TIME,
+            FUNCTION_SET_TIMER,
+            stime_value as usize,
+            0,
+            0,
+        );
+    }
 }
 
 /// IPI Extension, Extension ID: 0x735049 (sPI: s-mode IPI)
 ///
 /// Caller should validate if this extension exists using [`probe_extension`].
-/// 
+///
 /// [`probe_extension`]: ../base/fn.probe_extension.html
 pub mod ipi {
-// todo
+    // todo
 
     // use super::*;
     // const FUNCTION_SEND_IPI: usize = 0;
