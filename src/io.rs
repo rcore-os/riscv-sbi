@@ -8,8 +8,8 @@ struct Stdout;
 
 impl fmt::Write for Stdout {
     fn write_str(&mut self, s: &str) -> fmt::Result {
-        for c in s.chars() {
-            legacy::console_putchar(c as u8 as usize);
+        for byte in s.as_bytes() {
+            legacy::console_putchar(*byte as usize);
         }
         Ok(())
     }
