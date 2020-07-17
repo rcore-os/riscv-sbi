@@ -26,7 +26,7 @@ impl HartMask {
         let (i, _) = split_index_usize(max_hart_id);
         let len = i + 1;
         HartMask {
-            inner: vec![1usize; len],
+            inner: vec![usize::max_value(); len],
             max_hart_id,
         }
     }
