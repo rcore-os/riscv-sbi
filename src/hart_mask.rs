@@ -3,6 +3,7 @@ extern crate alloc;
 
 use alloc::{vec, vec::Vec};
 
+#[derive(Debug, Clone)]
 /// Hart mask for selecting harts in many extensions
 pub struct HartMask {
     inner: Vec<usize>,
