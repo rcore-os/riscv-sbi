@@ -20,6 +20,9 @@ pub mod log;
 #[doc(hidden)]
 pub mod io;
 
+mod hart_mask;
+pub use hart_mask::HartMask;
+
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 struct SbiReturn {

@@ -1,6 +1,7 @@
 //! Legacy SBI Extension, Extension IDs 0x00 through 0x0F
 //!
 //! Ref: https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc#legacy-sbi-extension-extension-ids-0x00-through-0x0f
+use crate::hart_mask::HartMask;
 
 #[inline(always)]
 fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
@@ -72,8 +73,8 @@ pub fn clear_ipi() {
 /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
 /// represented as a sequence of unsigned longs whose length equals the number of harts in the
 /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
-pub fn send_ipi(hart_mask: usize) {
-    sbi_call(SBI_SEND_IPI, &hart_mask as *const _ as usize, 0, 0);
+pub fn send_ipi(hart_mask: HartMask) {
+    sbi_call(SBI_SEND_IPI, hart_mask.as_ptr() as usize, 0, 0);
 }
 
 /// Instructs remote harts to execute `FENCE.I` instruction.
