@@ -6,7 +6,7 @@ use alloc::{vec, vec::Vec};
 /// Hart mask for selecting harts in many extensions
 pub struct HartMask {
     inner: Vec<usize>,
-    max_hart_id: usize
+    max_hart_id: usize,
 }
 
 impl HartMask {
@@ -14,14 +14,20 @@ impl HartMask {
     pub fn none(max_hart_id: usize) -> HartMask {
         let (i, _) = split_index_usize(max_hart_id);
         let len = i + 1;
-        HartMask { inner: vec![0usize; len], max_hart_id }
+        HartMask {
+            inner: vec![0usize; len],
+            max_hart_id,
+        }
     }
 
     /// Create a new hart mask with all harts selected
     pub fn all(max_hart_id: usize) -> HartMask {
         let (i, _) = split_index_usize(max_hart_id);
         let len = i + 1;
-        HartMask { inner: vec![0usize; len], max_hart_id }
+        HartMask {
+            inner: vec![0usize; len],
+            max_hart_id,
+        }
     }
 
     /// Set one hart with id `hart_id`
