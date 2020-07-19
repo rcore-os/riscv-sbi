@@ -4,12 +4,12 @@
 use crate::hart_mask::HartMask;
 
 #[inline(always)]
-fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
+fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> usize {
     let ret;
     unsafe {
         llvm_asm!("ecall"
-            : "={x10}" (ret)
-            : "{x10}" (arg0), "{x11}" (arg1), "{x12}" (arg2), "{x17}" (which)
+            : "={a0}" (ret)
+            : "{a0}" (arg0), "{a1}" (arg1), "{a2}" (arg2), "{a3}" (arg3), "{a7}" (which)
             : "memory"
             : "volatile");
     }
@@ -24,21 +24,21 @@ fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
 ///
 /// [`console_getchar`]: console_getchar
 pub fn console_putchar(ch: usize) {
-    sbi_call(SBI_CONSOLE_PUTCHAR, ch, 0, 0);
+    sbi_call(SBI_CONSOLE_PUTCHAR, ch, 0, 0, 0);
 }
 
 /// Read a byte from debug console
 ///
 /// Returns the byte on success, or -1 for failure.
 pub fn console_getchar() -> usize {
-    sbi_call(SBI_CONSOLE_GETCHAR, 0, 0, 0)
+    sbi_call(SBI_CONSOLE_GETCHAR, 0, 0, 0, 0)
 }
 
 /// Puts all the harts to shut down state from supervisor point of view.
 ///
 /// This SBI call doesn’t return.
 pub fn shutdown() -> ! {
-    sbi_call(SBI_SHUTDOWN, 0, 0, 0);
+    sbi_call(SBI_SHUTDOWN, 0, 0, 0, 0);
     unreachable!()
 }
 
@@ -56,16 +56,17 @@ pub fn set_timer(stime_value: u64) {
         stime_value as usize,
         (stime_value >> 32) as usize,
         0,
+        0,
     );
     #[cfg(target_pointer_width = "64")]
-    sbi_call(SBI_SET_TIMER, stime_value as usize, 0, 0);
+    sbi_call(SBI_SET_TIMER, stime_value as usize, 0, 0, 0);
 }
 
 /// Clears the pending IPIs if any.
 ///
 /// The IPI is cleared only in the hart for which this SBI call is invoked.
 pub fn clear_ipi() {
-    sbi_call(SBI_CLEAR_IPI, 0, 0, 0);
+    sbi_call(SBI_CLEAR_IPI, 0, 0, 0, 0);
 }
 
 /// Send an inter-processor interrupt to all the harts defined in `hart_mask`.
@@ -74,7 +75,7 @@ pub fn clear_ipi() {
 /// represented as a sequence of unsigned longs whose length equals the number of harts in the
 /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
 pub fn send_ipi(hart_mask: HartMask) {
-    sbi_call(SBI_SEND_IPI, hart_mask.as_ptr() as usize, 0, 0);
+    sbi_call(SBI_SEND_IPI, hart_mask.as_ptr() as usize, 0, 0, 0);
 }
 
 /// Instructs remote harts to execute `FENCE.I` instruction.
@@ -82,25 +83,26 @@ pub fn send_ipi(hart_mask: HartMask) {
 /// N.B. `hart_mask` is as described in [`send_ipi`].
 ///
 /// [`send_ipi`]: send_ipi
-pub fn remote_fence_i(hart_mask: usize) {
-    sbi_call(SBI_REMOTE_FENCE_I, &hart_mask as *const _ as usize, 0, 0);
+pub fn remote_fence_i(hart_mask: HartMask) {
+    sbi_call(SBI_REMOTE_FENCE_I, hart_mask.as_ptr() as usize, 0, 0, 0);
 }
 
 /// Instructs the remote harts to execute one or more `SFENCE.VMA` instructions,
 /// covering the range of virtual addresses between `start` and `size`.
-pub fn remote_sfence_vma(hart_mask: usize, _start: usize, _size: usize) {
-    sbi_call(SBI_REMOTE_SFENCE_VMA, &hart_mask as *const _ as usize, 0, 0);
+pub fn remote_sfence_vma(hart_mask: HartMask, start: usize, size: usize) {
+    sbi_call(SBI_REMOTE_SFENCE_VMA, hart_mask.as_ptr() as usize, start, size, 0);
 }
 
 /// Instruct the remote harts to execute one or more `SFENCE.VMA` instructions,
 /// covering the range of virtual addresses between `start` and `size`.
 /// This covers only the given `ASID`.
-pub fn remote_sfence_vma_asid(hart_mask: usize, _start: usize, _size: usize, _asid: usize) {
+pub fn remote_sfence_vma_asid(hart_mask: HartMask, start: usize, size: usize, asid: usize) {
     sbi_call(
         SBI_REMOTE_SFENCE_VMA_ASID,
-        &hart_mask as *const _ as usize,
-        0,
-        0,
+        hart_mask.as_ptr() as usize,
+        start,
+        size,
+        asid,
     );
 }
 

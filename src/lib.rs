@@ -70,8 +70,8 @@ fn sbi_call(ext_id: usize, func_id: usize, arg0: usize, arg1: usize, arg2: usize
     unsafe {
         llvm_asm!(
             "ecall"
-            : "={x10}" (error), "={x11}"(value)
-            : "{x10}" (arg0), "{x11}" (arg1), "{x12}" (arg2), "{x16}"(func_id), "{x17}" (ext_id)
+            : "={a0}" (error), "={a1}"(value)
+            : "{a0}" (arg0), "{a1}" (arg1), "{a2}" (arg2), "{a6}"(func_id), "{a7}" (ext_id)
             : "memory"
             : "volatile"
         );
