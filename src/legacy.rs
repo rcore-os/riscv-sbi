@@ -7,11 +7,16 @@ use crate::hart_mask::HartMask;
 fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> usize {
     let ret;
     unsafe {
-        llvm_asm!("ecall"
-            : "={a0}" (ret)
-            : "{a0}" (arg0), "{a1}" (arg1), "{a2}" (arg2), "{a3}" (arg3), "{a7}" (which)
-            : "memory"
-            : "volatile");
+        asm!(
+            "ecall",
+            lateout("a0") ret,
+            in("a0") arg0,
+            in("a1") arg1,
+            in("a2") arg2,
+            in("a3") arg3,
+            in("a7") which,
+            options(nostack)
+        );
     }
     ret
 }
@@ -90,7 +95,13 @@ pub fn remote_fence_i(hart_mask: HartMask) {
 /// Instructs the remote harts to execute one or more `SFENCE.VMA` instructions,
 /// covering the range of virtual addresses between `start` and `size`.
 pub fn remote_sfence_vma(hart_mask: HartMask, start: usize, size: usize) {
-    sbi_call(SBI_REMOTE_SFENCE_VMA, hart_mask.as_ptr() as usize, start, size, 0);
+    sbi_call(
+        SBI_REMOTE_SFENCE_VMA,
+        hart_mask.as_ptr() as usize,
+        start,
+        size,
+        0,
+    );
 }
 
 /// Instruct the remote harts to execute one or more `SFENCE.VMA` instructions,

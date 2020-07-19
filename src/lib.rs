@@ -9,7 +9,7 @@
 
 #![no_std]
 #![deny(warnings, missing_docs)]
-#![feature(llvm_asm)]
+#![feature(asm)]
 
 pub mod base;
 pub mod legacy;
@@ -65,17 +65,31 @@ impl From<SbiReturn> for SbiResult<usize> {
 
 #[inline(always)]
 fn sbi_call(ext_id: usize, func_id: usize, arg0: usize, arg1: usize, arg2: usize) -> SbiReturn {
-    let error;
+    let error: isize;
     let value;
     unsafe {
-        llvm_asm!(
-            "ecall"
-            : "={a0}" (error), "={a1}"(value)
-            : "{a0}" (arg0), "{a1}" (arg1), "{a2}" (arg2), "{a6}"(func_id), "{a7}" (ext_id)
-            : "memory"
-            : "volatile"
+        asm!(
+            "ecall",
+            lateout("a0") error,
+            lateout("a1") value,
+            in("a0") arg0,
+            in("a1") arg1,
+            in("a2") arg2,
+            in("a6") func_id,
+            in("a7") ext_id,
+            options(nostack)
         );
     }
+    let error = match error {
+        0 => SbiError::Success,
+        -1 => SbiError::Failed,
+        -2 => SbiError::NotSupported,
+        -3 => SbiError::InvalidParam,
+        -4 => SbiError::Denied,
+        -5 => SbiError::InvalidAddress,
+        -6 => SbiError::AlreadyAvailable,
+        error => panic!("invalid error value: {}", error),
+    };
     SbiReturn { error, value }
 }
 
