@@ -149,23 +149,96 @@ pub mod ipi {
     /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
     /// represented as a sequence of unsigned longs whose length equals the number of harts in the
     /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
-    pub fn send_ipi(hart_mask: &HartMask, /* todo: hart_mask_base: usize*/) {
+    pub fn send_ipi(hart_mask: &HartMask, /* todo: hart_mask_base: usize*/) -> SbiReturn {
         sbi_call(
             EXTENSION_IPI,
             FUNCTION_SEND_IPI,
             hart_mask.as_ptr() as usize,
             0, /* todo: hart_mask_base */
             0,
-        );
+        )
     }
 }
 
 /// RFENCE Extension, Extension ID: 0x52464E43 (RFNC)
 pub mod rfnc {
+    use super::*;
     // todo
+    pub fn remote_fence_i(hart_mask: &HartMask, hart_mask_base: usize) -> SbiReturn {
+        todo!()
+    }
+    
+    pub fn remote_fence_vma(
+        hart_mask: &HartMask, 
+        hart_mask_base: usize, 
+        start_addr: usize, 
+        size: usize
+    ) -> SbiReturn {
+        todo!()
+    }
+    
+    pub fn remote_fence_vma_asid(
+        hart_mask: &HartMask, 
+        hart_mask_base: usize, 
+        start_addr: usize, 
+        size: usize, 
+        asid: usize
+    ) -> SbiReturn {
+        todo!()
+    }
+
+    pub fn remote_hfence_gvma_vmid(
+        hart_mask: &HartMask, 
+        hart_mask_base: usize, 
+        start_addr: usize, 
+        size: usize, 
+        vmid: usize
+    ) -> SbiReturn {
+        todo!()
+    }
+    
+    pub fn remote_hfence_gvma(
+        hart_mask: &HartMask, 
+        hart_mask_base: usize, 
+        start_addr: usize, 
+        size: usize
+    ) -> SbiReturn {
+        todo!()
+    }
+    pub fn remote_hfence_vvma_asid(
+        hart_mask: &HartMask, 
+        hart_mask_base: usize, 
+        start_addr: usize, 
+        size: usize, 
+        asid: usize
+    ) -> SbiReturn {
+        todo!()
+    }
+
+    pub fn remote_hfence_vvma(
+        hart_mask: &HartMask, 
+        hart_mask_base: usize, 
+        start_addr: usize, 
+        size: usize
+    ) -> SbiReturn {
+        todo!()
+    }
 }
 
 /// Hart State Management Extension, Extension ID: 0x48534D (HSM)
 pub mod hsm {
     // todo
+    use super::*;
+
+    pub fn hart_start(hart_id: usize, start_addr: usize, privilege: usize) -> SbiReturn {
+        todo!()
+    }
+
+    pub fn hart_stop() -> SbiReturn { 
+        todo!()
+    }
+
+    pub fn hart_status(hart_id: usize) -> SbiReturn {
+        todo!()
+    }
 }
