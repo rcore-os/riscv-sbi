@@ -79,7 +79,7 @@ pub fn clear_ipi() {
 /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
 /// represented as a sequence of unsigned longs whose length equals the number of harts in the
 /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
-pub fn send_ipi(hart_mask: HartMask) {
+pub fn send_ipi(hart_mask: &HartMask) {
     sbi_call(SBI_SEND_IPI, hart_mask.as_ptr() as usize, 0, 0, 0);
 }
 
@@ -88,13 +88,13 @@ pub fn send_ipi(hart_mask: HartMask) {
 /// N.B. `hart_mask` is as described in [`send_ipi`].
 ///
 /// [`send_ipi`]: send_ipi
-pub fn remote_fence_i(hart_mask: HartMask) {
+pub fn remote_fence_i(hart_mask: &HartMask) {
     sbi_call(SBI_REMOTE_FENCE_I, hart_mask.as_ptr() as usize, 0, 0, 0);
 }
 
 /// Instructs the remote harts to execute one or more `SFENCE.VMA` instructions,
 /// covering the range of virtual addresses between `start` and `size`.
-pub fn remote_sfence_vma(hart_mask: HartMask, start: usize, size: usize) {
+pub fn remote_sfence_vma(hart_mask: &HartMask, start: usize, size: usize) {
     sbi_call(
         SBI_REMOTE_SFENCE_VMA,
         hart_mask.as_ptr() as usize,
@@ -107,7 +107,7 @@ pub fn remote_sfence_vma(hart_mask: HartMask, start: usize, size: usize) {
 /// Instruct the remote harts to execute one or more `SFENCE.VMA` instructions,
 /// covering the range of virtual addresses between `start` and `size`.
 /// This covers only the given `ASID`.
-pub fn remote_sfence_vma_asid(hart_mask: HartMask, start: usize, size: usize, asid: usize) {
+pub fn remote_sfence_vma_asid(hart_mask: &HartMask, start: usize, size: usize, asid: usize) {
     sbi_call(
         SBI_REMOTE_SFENCE_VMA_ASID,
         hart_mask.as_ptr() as usize,

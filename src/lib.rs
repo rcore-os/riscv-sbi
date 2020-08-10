@@ -94,7 +94,7 @@ fn sbi_call(ext_id: usize, func_id: usize, arg0: usize, arg1: usize, arg2: usize
 }
 
 const EXTENSION_TIME: usize = 0x54494D45;
-// const EXTENSION_IPI: usize = 0x735049;
+const EXTENSION_IPI: usize = 0x735049;
 
 /// Timer Extension, Extension ID: 0x54494D45 (TIME)
 ///
@@ -141,17 +141,23 @@ pub mod time {
 pub mod ipi {
     // todo
 
-    // use super::*;
-    // const FUNCTION_SEND_IPI: usize = 0;
+    use super::*;
+    const FUNCTION_SEND_IPI: usize = 0;
 
-    // /// Send an inter-processor interrupt to all the harts defined in `hart_mask`.
-    // ///
-    // /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
-    // /// represented as a sequence of unsigned longs whose length equals the number of harts in the
-    // /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
-    // pub fn send_ipi(hart_mask: usize, hart_mask_base: usize) {
-    //     sbi_call(SBI_SEND_IPI, &hart_mask as *const _ as usize, 0, 0);
-    // }
+    /// Send an inter-processor interrupt to all the harts defined in `hart_mask`.
+    ///
+    /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
+    /// represented as a sequence of unsigned longs whose length equals the number of harts in the
+    /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
+    pub fn send_ipi(hart_mask: &HartMask, /* todo: hart_mask_base: usize*/) {
+        sbi_call(
+            EXTENSION_IPI,
+            FUNCTION_SEND_IPI,
+            hart_mask.as_ptr() as usize,
+            0, /* todo: hart_mask_base */
+            0,
+        );
+    }
 }
 
 /// RFENCE Extension, Extension ID: 0x52464E43 (RFNC)
