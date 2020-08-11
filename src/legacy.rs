@@ -5,20 +5,27 @@ use crate::hart_mask::HartMask;
 
 #[inline(always)]
 fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> usize {
-    let ret;
-    unsafe {
-        asm!(
-            "ecall",
-            lateout("a0") ret,
-            in("a0") arg0,
-            in("a1") arg1,
-            in("a2") arg2,
-            in("a3") arg3,
-            in("a7") which,
-            options(nostack)
-        );
+    match () {
+        #[cfg(target = "riscv")]
+        () => {
+            let ret;
+            unsafe {
+                asm!(
+                    "ecall",
+                    lateout("a0") ret,
+                    in("a0") arg0,
+                    in("a1") arg1,
+                    in("a2") arg2,
+                    in("a3") arg3,
+                    in("a7") which,
+                    options(nostack)
+                );
+            }
+            ret
+        },
+        #[cfg(not(target = "riscv"))]
+        () => unimplemented!("{} {} {} {} {}", which, arg0, arg1, arg2, arg3),
     }
-    ret
 }
 
 /// Write data present in `ch` to debug console.

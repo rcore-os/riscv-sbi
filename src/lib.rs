@@ -65,32 +65,39 @@ impl From<SbiReturn> for SbiResult<usize> {
 
 #[inline(always)]
 fn sbi_call(ext_id: usize, func_id: usize, arg0: usize, arg1: usize, arg2: usize) -> SbiReturn {
-    let error: isize;
-    let value;
-    unsafe {
-        asm!(
-            "ecall",
-            lateout("a0") error,
-            lateout("a1") value,
-            in("a0") arg0,
-            in("a1") arg1,
-            in("a2") arg2,
-            in("a6") func_id,
-            in("a7") ext_id,
-            options(nostack)
-        );
+    match () {
+        #[cfg(target = "riscv")]
+        () => {
+            let error: isize;
+            let value;
+            unsafe {
+                asm!(
+                    "ecall",
+                    lateout("a0") error,
+                    lateout("a1") value,
+                    in("a0") arg0,
+                    in("a1") arg1,
+                    in("a2") arg2,
+                    in("a6") func_id,
+                    in("a7") ext_id,
+                    options(nostack)
+                );
+            }
+            let error = match error {
+                0 => SbiError::Success,
+                -1 => SbiError::Failed,
+                -2 => SbiError::NotSupported,
+                -3 => SbiError::InvalidParam,
+                -4 => SbiError::Denied,
+                -5 => SbiError::InvalidAddress,
+                -6 => SbiError::AlreadyAvailable,
+                error => panic!("invalid error value: {}", error),
+            };
+            SbiReturn { error, value }
+        },
+        #[cfg(not(target = "riscv"))]
+        () => unimplemented!("{} {} {} {} {}", ext_id, func_id, arg0, arg1, arg2),
     }
-    let error = match error {
-        0 => SbiError::Success,
-        -1 => SbiError::Failed,
-        -2 => SbiError::NotSupported,
-        -3 => SbiError::InvalidParam,
-        -4 => SbiError::Denied,
-        -5 => SbiError::InvalidAddress,
-        -6 => SbiError::AlreadyAvailable,
-        error => panic!("invalid error value: {}", error),
-    };
-    SbiReturn { error, value }
 }
 
 const EXTENSION_TIME: usize = 0x54494D45;
@@ -149,79 +156,86 @@ pub mod ipi {
     /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
     /// represented as a sequence of unsigned longs whose length equals the number of harts in the
     /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
-    pub fn send_ipi(hart_mask: &HartMask, /* todo: hart_mask_base: usize*/) -> SbiReturn {
+    pub fn send_ipi(hart_mask: &HartMask, /* todo: hart_mask_base: usize*/) /*-> SbiResult<()>*/ {
         sbi_call(
             EXTENSION_IPI,
             FUNCTION_SEND_IPI,
             hart_mask.as_ptr() as usize,
             0, /* todo: hart_mask_base */
             0,
-        )
+        ); // todo return value
     }
 }
 
 /// RFENCE Extension, Extension ID: 0x52464E43 (RFNC)
 pub mod rfnc {
     use super::*;
-    // todo
-    pub fn remote_fence_i(hart_mask: &HartMask, hart_mask_base: usize) -> SbiReturn {
-        todo!()
+    /// todo
+    pub fn remote_fence_i(hart_mask: &HartMask, hart_mask_base: usize) -> SbiResult {
+        todo!("{:?} {:?}", hart_mask, hart_mask_base)
     }
     
+    /// todo
     pub fn remote_fence_vma(
         hart_mask: &HartMask, 
         hart_mask_base: usize, 
         start_addr: usize, 
         size: usize
-    ) -> SbiReturn {
-        todo!()
+    ) -> SbiResult {
+        todo!("{:?} {:?} {} {}", hart_mask, hart_mask_base, start_addr, size)
     }
     
+    /// todo
     pub fn remote_fence_vma_asid(
         hart_mask: &HartMask, 
         hart_mask_base: usize, 
         start_addr: usize, 
         size: usize, 
         asid: usize
-    ) -> SbiReturn {
-        todo!()
+    ) -> SbiResult {
+        todo!("{:?} {:?} {} {} {}", hart_mask, hart_mask_base, start_addr, size, asid)
     }
 
+    /// todo
     pub fn remote_hfence_gvma_vmid(
         hart_mask: &HartMask, 
         hart_mask_base: usize, 
         start_addr: usize, 
         size: usize, 
         vmid: usize
-    ) -> SbiReturn {
-        todo!()
+    ) -> SbiResult {
+        todo!("{:?} {:?} {} {} {}", hart_mask, hart_mask_base, start_addr, size, vmid)
     }
     
+    /// todo
     pub fn remote_hfence_gvma(
         hart_mask: &HartMask, 
         hart_mask_base: usize, 
         start_addr: usize, 
         size: usize
-    ) -> SbiReturn {
-        todo!()
+    ) -> SbiResult {
+        todo!("{:?} {:?} {} {}", hart_mask, hart_mask_base, start_addr, size)
     }
+
+    /// todo
     pub fn remote_hfence_vvma_asid(
         hart_mask: &HartMask, 
         hart_mask_base: usize, 
         start_addr: usize, 
         size: usize, 
         asid: usize
-    ) -> SbiReturn {
-        todo!()
+    ) -> SbiResult {
+        todo!("{:?} {:?} {} {} {}", hart_mask, hart_mask_base, start_addr, size, asid)
     }
 
+    /// todo
     pub fn remote_hfence_vvma(
         hart_mask: &HartMask, 
         hart_mask_base: usize, 
         start_addr: usize, 
         size: usize
-    ) -> SbiReturn {
-        todo!()
+    ) -> SbiResult {
+        todo!("{:?} {:?} {} {}", hart_mask, hart_mask_base, start_addr, size)
     }
 }
 
@@ -230,15 +244,18 @@ pub mod hsm {
     // todo
     use super::*;
 
-    pub fn hart_start(hart_id: usize, start_addr: usize, privilege: usize) -> SbiReturn {
+    /// todo
+    pub fn hart_start(hart_id: usize, start_addr: usize, privilege: usize) -> SbiResult {
+        todo!("{} {} {}", hart_id, start_addr, privilege)
+    }
+
+    /// todo
+    pub fn hart_stop() -> SbiResult { 
         todo!()
     }
 
-    pub fn hart_stop() -> SbiReturn { 
-        todo!()
-    }
-
-    pub fn hart_status(hart_id: usize) -> SbiReturn {
-        todo!()
+    /// todo
+    pub fn hart_status(hart_id: usize) -> SbiResult {
+        todo!("{}", hart_id)
     }
 }
