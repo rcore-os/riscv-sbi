@@ -67,22 +67,20 @@ impl From<SbiReturn> for SbiResult<usize> {
 fn sbi_call(ext_id: usize, func_id: usize, arg0: usize, arg1: usize, arg2: usize) -> SbiReturn {
     match () {
         #[cfg(target = "riscv")]
-        () => {
+        () => unsafe {
             let error: isize;
             let value;
-            unsafe {
-                asm!(
-                    "ecall",
-                    lateout("a0") error,
-                    lateout("a1") value,
-                    in("a0") arg0,
-                    in("a1") arg1,
-                    in("a2") arg2,
-                    in("a6") func_id,
-                    in("a7") ext_id,
-                    options(nostack)
-                );
-            }
+            asm!(
+                "ecall",
+                lateout("a0") error,
+                lateout("a1") value,
+                in("a0") arg0,
+                in("a1") arg1,
+                in("a2") arg2,
+                in("a6") func_id,
+                in("a7") ext_id,
+                options(nostack)
+            );
             let error = match error {
                 0 => SbiError::Success,
                 -1 => SbiError::Failed,

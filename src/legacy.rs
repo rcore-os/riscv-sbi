@@ -7,20 +7,18 @@ use crate::hart_mask::HartMask;
 fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize, arg3: usize) -> usize {
     match () {
         #[cfg(target = "riscv")]
-        () => {
+        () => unsafe {
             let ret;
-            unsafe {
-                asm!(
-                    "ecall",
-                    lateout("a0") ret,
-                    in("a0") arg0,
-                    in("a1") arg1,
-                    in("a2") arg2,
-                    in("a3") arg3,
-                    in("a7") which,
-                    options(nostack)
-                );
-            }
+            asm!(
+                "ecall",
+                lateout("a0") ret,
+                in("a0") arg0,
+                in("a1") arg1,
+                in("a2") arg2,
+                in("a3") arg3,
+                in("a7") which,
+                options(nostack)
+            );
             ret
         },
         #[cfg(not(target = "riscv"))]
