@@ -65,6 +65,8 @@ impl From<SbiReturn> for SbiResult<usize> {
 
 #[inline(always)]
 fn sbi_call(ext_id: usize, func_id: usize, arg0: usize, arg1: usize, arg2: usize) -> SbiReturn {
+    // allows to build code in RISC-V and test code on other platforms
+    #[allow(clippy::match_single_binding)] 
     match () {
         #[cfg(target = "riscv")]
         () => unsafe {
