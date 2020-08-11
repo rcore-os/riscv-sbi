@@ -154,7 +154,8 @@ pub mod ipi {
     /// `hart_mask` is a virtual address that points to a bit-vector of harts. The bit vector is
     /// represented as a sequence of unsigned longs whose length equals the number of harts in the
     /// system divided by the number of bits in an unsigned long, rounded up to the next integer.
-    pub fn send_ipi(hart_mask: &HartMask, /* todo: hart_mask_base: usize*/) /*-> SbiResult<()>*/ {
+    pub fn send_ipi(hart_mask: &HartMask /* todo: hart_mask_base: usize*/) /*-> SbiResult<()>*/
+    {
         sbi_call(
             EXTENSION_IPI,
             FUNCTION_SEND_IPI,
@@ -172,68 +173,107 @@ pub mod rfnc {
     pub fn remote_fence_i(hart_mask: &HartMask, hart_mask_base: usize) -> SbiResult {
         todo!("{:?} {:?}", hart_mask, hart_mask_base)
     }
-    
+
     /// todo
     pub fn remote_fence_vma(
-        hart_mask: &HartMask, 
-        hart_mask_base: usize, 
-        start_addr: usize, 
-        size: usize
+        hart_mask: &HartMask,
+        hart_mask_base: usize,
+        start_addr: usize,
+        size: usize,
     ) -> SbiResult {
-        todo!("{:?} {:?} {} {}", hart_mask, hart_mask_base, start_addr, size)
+        todo!(
+            "{:?} {:?} {} {}",
+            hart_mask,
+            hart_mask_base,
+            start_addr,
+            size
+        )
     }
-    
+
     /// todo
     pub fn remote_fence_vma_asid(
-        hart_mask: &HartMask, 
-        hart_mask_base: usize, 
-        start_addr: usize, 
-        size: usize, 
-        asid: usize
+        hart_mask: &HartMask,
+        hart_mask_base: usize,
+        start_addr: usize,
+        size: usize,
+        asid: usize,
     ) -> SbiResult {
-        todo!("{:?} {:?} {} {} {}", hart_mask, hart_mask_base, start_addr, size, asid)
+        todo!(
+            "{:?} {:?} {} {} {}",
+            hart_mask,
+            hart_mask_base,
+            start_addr,
+            size,
+            asid
+        )
     }
 
     /// todo
     pub fn remote_hfence_gvma_vmid(
-        hart_mask: &HartMask, 
-        hart_mask_base: usize, 
-        start_addr: usize, 
-        size: usize, 
-        vmid: usize
+        hart_mask: &HartMask,
+        hart_mask_base: usize,
+        start_addr: usize,
+        size: usize,
+        vmid: usize,
     ) -> SbiResult {
-        todo!("{:?} {:?} {} {} {}", hart_mask, hart_mask_base, start_addr, size, vmid)
+        todo!(
+            "{:?} {:?} {} {} {}",
+            hart_mask,
+            hart_mask_base,
+            start_addr,
+            size,
+            vmid
+        )
     }
-    
+
     /// todo
     pub fn remote_hfence_gvma(
-        hart_mask: &HartMask, 
-        hart_mask_base: usize, 
-        start_addr: usize, 
-        size: usize
+        hart_mask: &HartMask,
+        hart_mask_base: usize,
+        start_addr: usize,
+        size: usize,
     ) -> SbiResult {
-        todo!("{:?} {:?} {} {}", hart_mask, hart_mask_base, start_addr, size)
+        todo!(
+            "{:?} {:?} {} {}",
+            hart_mask,
+            hart_mask_base,
+            start_addr,
+            size
+        )
     }
 
     /// todo
     pub fn remote_hfence_vvma_asid(
-        hart_mask: &HartMask, 
-        hart_mask_base: usize, 
-        start_addr: usize, 
-        size: usize, 
-        asid: usize
+        hart_mask: &HartMask,
+        hart_mask_base: usize,
+        start_addr: usize,
+        size: usize,
+        asid: usize,
     ) -> SbiResult {
-        todo!("{:?} {:?} {} {} {}", hart_mask, hart_mask_base, start_addr, size, asid)
+        todo!(
+            "{:?} {:?} {} {} {}",
+            hart_mask,
+            hart_mask_base,
+            start_addr,
+            size,
+            asid
+        )
     }
 
     /// todo
     pub fn remote_hfence_vvma(
-        hart_mask: &HartMask, 
-        hart_mask_base: usize, 
-        start_addr: usize, 
-        size: usize
+        hart_mask: &HartMask,
+        hart_mask_base: usize,
+        start_addr: usize,
+        size: usize,
     ) -> SbiResult {
-        todo!("{:?} {:?} {} {}", hart_mask, hart_mask_base, start_addr, size)
+        todo!(
+            "{:?} {:?} {} {}",
+            hart_mask,
+            hart_mask_base,
+            start_addr,
+            size
+        )
     }
 }
 
@@ -248,7 +288,7 @@ pub mod hsm {
     }
 
     /// todo
-    pub fn hart_stop() -> SbiResult { 
+    pub fn hart_stop() -> SbiResult {
         todo!()
     }
 
